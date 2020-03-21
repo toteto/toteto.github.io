@@ -1,0 +1,26 @@
+<html>
+    <div id="startingGameContainer" style="display: none;">
+        <input placeholder="Your name" id="inputName"/>
+        <input placeholder="Words (CSV format)" id="inputWords"/>
+        <p id="textHostGameId"></p> 
+        <p id="textPlayers"></p>
+        <button id="btnStartGame" style="display: none;">START GAME</button>
+        <div id="hostGameContainer" style="padding: 10px;">
+            <button id="btnHostGame">Host new game</button>
+        </div>
+        <div id="joinGameContainer" style="padding: 10px;">
+            <input id="inputJoinGameId"/>
+            <button id="btnJoinGame">Join game</button>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
+        <script src="index.js"></script>
+    </div>
+    <div id="gameInProgressContainer" style="display: none;">
+        <p id="currentTurn"></p>
+        <div id="myTurnContainer">
+            <p id="wordToGuess"></p>
+            <button style="background-color: green;" id="btnCorrect">Correct</button>
+            <button style="background-color: red;" id="btnIncorrect">Incorrect</button>
+        </div>
+    </div>
+</html>
