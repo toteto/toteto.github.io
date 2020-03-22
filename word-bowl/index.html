@@ -1,31 +1,74 @@
+<!DOCTYPE html>
 <html>
-    <div id="userInputContainer">
-        <input placeholder="Your name" id="inputName"/>
-        <input placeholder="Words (CSV format)" id="inputWords"/>
-    </div>
-    <div id="hostOrJoinGameContainer">
-        <button id="btnHostGame">Host new game</button>
-        <div style="padding: 10px;">
-            <input id="inputJoinGameId"/>
-            <button id="btnJoinGame">Join game</button>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Word Bowl</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css" />
+  </head>
+  <body>
+    <div class="container" style="max-width: 800px;">
+      <section class="section">
+        <h1 class="title">Word Bowl</h1>
+        <h2 class="subtitle">A variation on the charades game that Buli has thought us.</h2>
+      </section>
+      <section class="section" id="userInputContainer">
+        <div class="container">
+          <div class="field">
+            <label class="label">Name</label>
+            <input class="input" type="text" placeholder="Your name" id="inputName" />
+          </div>
+          <div class="field">
+            <label class="label">Words</label>
+            <input class="input" type="text" placeholder="Words (CSV format)" id="inputWords" />
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control is-expanded">
+                <button class="button is-primary is-light" id="btnHostGame">Host new game</button>
+              </div>
+            </div>
+            <div class="field has-addons">
+              <div class="control is-expanded">
+                <input class="input" type="text" id="inputJoinGameId" placeholder="Game ID" />
+              </div>
+              <div class="control">
+                <a class="button is-primary" id="btnJoinGame">Join game</a>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
-    <div id="pendingGameContainer">
-        <p id="textHostGameId"></p> 
-        <button id="btnStartGame" style="display: none;">START GAME</button>
-    </div>
-    <p id="textPlayers"></p>
-    <div id="gameInProgressContainer" style="display: none;">
-        <p id="currentTurn"></p>
-        <div id="myTurnContainer">
-            <p id="wordToGuess"></p>
-            <button style="background-color: green;" id="btnCorrect">Correct</button>
-            <button style="background-color: red;" id="btnIncorrect">Incorrect</button>
+      </section>
+      <section class="section" id="hostPendingGameContainer" style="display: none;">
+        <div class="tags has-addons">
+          <span class="tag is-medium">Game ID</span>
+          <span class="tag is-dark is-medium" id="textHostGameId"></span>
         </div>
+        <button class="button is-warning" id="btnStartGame">START GAME</button>
+      </section>
+      <section class="section" id="playersSectionContainer" style="display: none;">
+        <label class="label">Players</label>
+        <div class="tags" id="playersContainer"><!-- dynamic content --></div>
+
+        <div class="card" id="myTurnContainer" style="display: none; max-width: 50%;">
+          <header class="card-header">
+            <p class="card-header-title">It is your turn</p>
+          </header>
+          <div class="card-content">
+            <p class="title" id="wordToGuess"></p>
+          </div>
+          <div class="card-footer">
+            <a class="card-footer-item" id="btnCorrect">Correct</a>
+            <a class="card-footer-item" id="btnIncorrect">Incorrect</a>
+          </div>
+        </div>
+      </section>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
     <script src="host-controller.js"></script>
     <script src="client-controller.js"></script>
     <script src="utils.js"></script>
     <script src="index.js"></script>
+  </body>
 </html>

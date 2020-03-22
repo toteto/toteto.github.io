@@ -21,23 +21,21 @@
 
   // User actions
   btnHostGame.onclick = () => {
-    elementById('hostOrJoinGameContainer').style.display = 'none';
     elementById('userInputContainer').style.display = 'none';
     const hostController = WordBowlHostController.create();
 
     hostController.gameId().then(gameId => {
-      elementById('textHostGameId').innerHTML = `Game ID: <b>${gameId}</b>`;
-      btnStartGame.style.display = '';
+      elementById('hostPendingGameContainer').style.display = '';
+      elementById('textHostGameId').innerHTML = gameId;
       joinGame(gameId);
       btnStartGame.onclick = () => {
         hostController.startGame().then(() => {
-          elementById('pendingGameContainer').style.display = 'none';
+          elementById('hostPendingGameContainer').style.display = 'none';
         });
       };
     });
   };
   btnJoinGame.onclick = () => {
-    elementById('hostOrJoinGameContainer').style.display = 'none';
     elementById('userInputContainer').style.display = 'none';
     const joinGameId = inputJoinGame.value;
     joinGame(joinGameId);
@@ -50,16 +48,20 @@
 
     clientController.joinGame(gameId).catch(() => {
       alert('Connection to host timed out. Try again.');
-      elementById('hostOrJoinGameContainer').style.display = '';
     });
 
     clientController.onPlayersReceived(players => {
-      elementById('textPlayers').innerText = `Players: ${players.map(p => `\n${p.name} (${p.score})`)}`;
+      if (players?.length > 0) {
+        elementById('playersSectionContainer').style.display = '';
+        elementById('playersContainer').innerHTML = players
+          .map(p => `<span class="tag is-info is-light" id="player${p.name}">${p.name} (${p.score})</span>\n`)
+          .join('');
+      } else {
+        elementById('playersSectionContainer').style.display = 'none';
+      }
     });
     clientController.onCurrentTurnReceived(currentTurn => {
-      elementById('gameInProgressContainer').style.display = '';
-
-      elementById('currentTurn').innerHTML = `Current player: <b>${currentTurn.player}</b>`;
+      elementById(`player${currentTurn.player}`).classList.remove('is-light');
 
       if (currentTurn.word) {
         elementById('myTurnContainer').style.display = '';
@@ -71,7 +73,7 @@
       }
     });
     clientController.onNoCurrentTurnAvailable(() => {
-      elementById('gameInProgressContainer').style.display = 'none';
+      elementById('myTurnContainer').style.display = 'none';
     });
   }
 
