@@ -34,6 +34,15 @@
         });
       };
     });
+
+    hostController.onRoundFinished(nextRoundStarter => {
+      elementById('hostPendingGameContainer').style.display = '';
+      btnStartGame.onclick = () => {
+        nextRoundStarter().then(() => {
+          elementById('hostPendingGameContainer').style.display = 'none';
+        })
+      };
+    })
   };
   btnJoinGame.onclick = () => {
     elementById('userInputContainer').style.display = 'none';

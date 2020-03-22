@@ -12,7 +12,7 @@ class WordBowlHostController {
 
   constructor(peer) {
     this._peer = peer;
-    this.registerForIncomingGameJoins();
+    this._registerForIncomingGameJoins();
   }
 
   /**
@@ -37,13 +37,21 @@ class WordBowlHostController {
     //TODO: Make command that comes via Peer
     //TODO: Make player member of team in order to have the correct order.
     return new Promise((resolve, _) => {
-      this.updateStateForNextTurn();
-      this.sendPublicStateToPlayers();
+      this._updateStateForNextTurn();
+      this._sendPublicStateToPlayers();
       resolve();
     });
   }
 
-  registerForIncomingGameJoins() {
+  _onRoundFinishedReceiver = null;
+  /**
+   * @param {(() => Promise<void>)) => void} receiver
+   */
+  onRoundFinished(receiver) {
+    this._onRoundFinishedReceiver = receiver;
+  }
+
+  _registerForIncomingGameJoins() {
     this._peer.on('connection', conn => {
       conn.on('open', () => {
         let player = this._hostState.players.find(p => p.name === conn.metadata.name);
@@ -59,27 +67,29 @@ class WordBowlHostController {
           };
           this._hostState.players.push(player);
         }
-        this.registerForPlayerActions(player);
-        this.sendPublicStateToPlayers();
+        this._registerForPlayerActions(player);
+        this._sendPublicStateToPlayers();
       });
     });
   }
 
-  registerForPlayerActions(player) {
+  _registerForPlayerActions(player) {
     player.conn.on('data', guessAction => {
       const currentTurn = this._hostState.currentTurn;
       if (guessAction.id === currentTurn?.turnId) {
         currentTurn.player.score += guessAction.correct ? 1 : 0;
         currentTurn.word.guessed = guessAction.correct;
 
-        this.updateStateForNextTurn();
-        this.sendPublicStateToPlayers();
+        this._updateStateForNextTurn();
+        this._sendPublicStateToPlayers();
       }
     });
   }
 
-  updateStateForNextTurn() {
+  _updateStateForNextTurn() {
     const remainingWords = this._hostState.players.flatMap(p => p.words.filter(w => !w.guessed));
+    console.log('_updateStateForNextTurn');
+    
 
     if (remainingWords.length > 0) {
       this._hostState.currentTurn = {
@@ -88,11 +98,21 @@ class WordBowlHostController {
         word: remainingWords.sample()
       };
     } else {
+      console.log('over');
+      
       this._hostState.currentTurn = null;
+      this._onRoundFinishedReceiver?.(() => {
+        return new Promise((resolve, _) => {
+          this._hostState.players.forEach(p => p.words.forEach(w => (w.guessed = false)));
+          this._updateStateForNextTurn();
+          this._sendPublicStateToPlayers();
+          resolve();
+        });
+      });
     }
   }
 
-  sendPublicStateToPlayers() {
+  _sendPublicStateToPlayers() {
     const mutualPlayerState = {
       players: this._hostState.players.map(p => ({ name: p.name, score: p.score }))
     };
