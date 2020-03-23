@@ -40,9 +40,9 @@
       btnStartGame.onclick = () => {
         nextRoundStarter().then(() => {
           elementById('hostPendingGameContainer').style.display = 'none';
-        })
+        });
       };
-    })
+    });
   };
   btnJoinGame.onclick = () => {
     elementById('userInputContainer').style.display = 'none';
@@ -53,11 +53,16 @@
   // Local functions
   function joinGame(gameId) {
     const clientController = ClientController.create({ name: myName, words: myWords });
-    // const clientController = ClientController.create({ name: myName, words: myWords });
 
-    clientController.joinGame(gameId).catch(() => {
-      alert('Connection to host timed out. Try again.');
-    });
+    const connectionFailedCatcher = () => {
+      const tryAgain = confirm('Connection to host failed. Try again...');
+      if (tryAgain) {
+        clientController.joinGame(gameId).catch(connectionFailedCatcher);
+      } else {
+        location.reload()
+      }
+    };
+    clientController.joinGame(gameId).catch(connectionFailedCatcher);
 
     clientController.onPlayersReceived(players => {
       if (players?.length > 0) {

@@ -8,7 +8,8 @@ function wordBowlPeer() {
           credential: 'LfeuhHqbto8JM+JwMYDbdjWdV'
         }
       ]
-    }
+    },
+    debug: 2
   });
 }
 

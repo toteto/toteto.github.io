@@ -19,7 +19,11 @@ class ClientController {
   joinGame(gameId) {
     return new Promise((resolve, reject) => {
       const { name, words } = this._userData;
-      const conn = this._peer.connect(gameId, { metadata: { name, words } });
+      const conn = this._peer.connect(gameId, {
+        metadata: { name, words },
+        serialization: 'json',
+        reliable: true
+      });
 
       const timeoutId = setTimeout(() => {
         conn.close();
@@ -53,7 +57,7 @@ class ClientController {
 
   _onNoCurrentTurnReceiver = null;
   /**
-   * @param {() => void} receiver 
+   * @param {() => void} receiver
    */
   onNoCurrentTurnAvailable(receiver) {
     this._onNoCurrentTurnReceiver = receiver;
@@ -72,7 +76,7 @@ class ClientController {
           incorrect: () => this._guess(conn, currentTurn, false)
         });
       } else {
-        this._onNoCurrentTurnReceiver?.()
+        this._onNoCurrentTurnReceiver?.();
       }
     });
   }
