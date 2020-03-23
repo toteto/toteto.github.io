@@ -10,10 +10,15 @@ class ClientController {
   constructor(userData, peer) {
     this._peer = peer;
     this._userData = userData;
+
+    this._peer.on('connection', conn => {
+      this.joinGame(conn.peer);
+      conn.close();
+    });
   }
 
   /**
-   * @param gameId The ID of the game to join.
+   * @param {string} gameId The ID of the game to join.
    * @returns {Promise<void>}
    */
   joinGame(gameId) {
@@ -33,6 +38,7 @@ class ClientController {
       conn.on('open', () => {
         clearTimeout(timeoutId);
         this._registerForGameStateUpdates(conn);
+        this._registerForCoupOpportunity(conn);
         resolve();
       });
     });
@@ -63,8 +69,20 @@ class ClientController {
     this._onNoCurrentTurnReceiver = receiver;
   }
 
+  _onOpportunityForCoup = null;
+  /**
+   *
+   * @param {(performCoup : () => Promise<WordBowlHostController>) => void} opportunist
+   */
+  onOpportunityForCoup(opportunist) {
+    this._onOpportunityForCoup = opportunist;
+  }
+
   _registerForGameStateUpdates(conn) {
     conn.on('data', gameState => {
+      console.log(gameState);
+
+      this._hostState = gameState.hostState;
       this._onPlayersReceiver?.(gameState.players);
 
       const currentTurn = gameState.currentTurn;
@@ -78,6 +96,33 @@ class ClientController {
       } else {
         this._onNoCurrentTurnReceiver?.();
       }
+    });
+  }
+
+  /**
+   * @type {{playerIds: [{id : string}]}}
+   */
+  _hostState = null;
+  _registerForCoupOpportunity(conn) {
+    conn.on('close', () => {
+      console.log('coup time', this._hostState);
+
+      this._onOpportunityForCoup(() => {
+        const hostController = WordBowlHostController.create();
+        return Promise.all(
+          // TODO: not the right place to perform coup, fine for now.
+          this._hostState.playerIds.map(
+            p =>
+              // TODO: Find a way to pass player score to the host controller and bind it to the existing user. Maybe the client could send his own score?
+              new Promise((connResolve, _) => {
+                const conn = hostController._peer.connect(p.id, { serialization: 'json', reliable: true });
+                conn.on('open', () => {
+                  connResolve(conn);
+                });
+              })
+          )
+        ).then(() => hostController);
+      });
     });
   }
 

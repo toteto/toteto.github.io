@@ -59,7 +59,7 @@
       if (tryAgain) {
         clientController.joinGame(gameId).catch(connectionFailedCatcher);
       } else {
-        location.reload()
+        location.reload();
       }
     };
     clientController.joinGame(gameId).catch(connectionFailedCatcher);
@@ -88,6 +88,15 @@
     });
     clientController.onNoCurrentTurnAvailable(() => {
       elementById('myTurnContainer').style.display = 'none';
+    });
+
+    clientController.onOpportunityForCoup(performCoup => {
+      $$coup = () => {
+        performCoup().then(hostController => {
+          // TODO: 
+          console.log(hostController);
+        });
+      };
     });
   }
 

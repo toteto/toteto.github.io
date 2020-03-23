@@ -88,8 +88,6 @@ class WordBowlHostController {
 
   _updateStateForNextTurn() {
     const remainingWords = this._hostState.players.flatMap(p => p.words.filter(w => !w.guessed));
-    console.log('_updateStateForNextTurn');
-    
 
     if (remainingWords.length > 0) {
       this._hostState.currentTurn = {
@@ -98,8 +96,6 @@ class WordBowlHostController {
         word: remainingWords.sample()
       };
     } else {
-      console.log('over');
-      
       this._hostState.currentTurn = null;
       this._onRoundFinishedReceiver?.(() => {
         return new Promise((resolve, _) => {
@@ -114,6 +110,12 @@ class WordBowlHostController {
 
   _sendPublicStateToPlayers() {
     const mutualPlayerState = {
+      hostState: {
+        // TODO: Add player words in state. This leads to a method in the host to apply current state from previous state.
+        playerIds: this._hostState.players.map(p => ({ id: p.conn.peer, score: p.score })),
+        // FIXME: Needs mapping, cannot send currentTurn.player since it has Peer connection
+        // currentTurn: this._hostState.currentTurn
+      },
       players: this._hostState.players.map(p => ({ name: p.name, score: p.score }))
     };
 
@@ -129,6 +131,9 @@ class WordBowlHostController {
           playerState.currentTurn.word = currentTurn.word.value;
         }
       }
+
+      console.log(playerState);
+      
 
       player.conn.send(playerState);
     });
