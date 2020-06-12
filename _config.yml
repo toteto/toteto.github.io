@@ -18,11 +18,11 @@ sass:
   style: compressed # expanded
 
 # SEO settings
-title: end2end
-description: "A free Jekyll theme for download"
-keywords: "Jekyll, theme, free, download, SEO, blog, web"
-url: http://nandomoreira.me
-baseurl: "/end2end"
+title: Antonio Ivanovski | toteto
+description: "Personal page and blog"
+keywords: "antonio ivanovski, антонио ивановски, toteto, тотето, software engineer"
+url: https://toteto.tech
+baseurl: ""
 
 google_analytics: UA-52446115-1
 repo: http://github.com/nandomoreirame/end2end
@@ -31,24 +31,31 @@ disqus_site_shortname: "nandothemes"
 
 # Author settings
 author:
-  name: Fernando Moreira
-  job: Frontend Engineer
-  bio: "Enthusiast performance, responsive design and usability, always looking for the best project and good coffee."
-  thumb: /images/author.jpg
-  email: nandomoreira.me@gmail.com
-  url: https://nandomoreira.me/
-  github: https://github.com/nandomoreirame
-  twitter: https://twitter.com/umdevux
-  facebook: https://facebook.com/umdevux
-  linkedin: https://linkedin.com/in/nandomoreirame
+  name: Antonio Ivanovski
+  job: Software Engineer
+  bio: "// TODO"
+  thumb: /images/author.png
+  email: me@toteto.tech
+  url: https://toteto.tech
+  github: https://github.com/toteto
+  facebook: https://www.facebook.com/tote.bt
+  instagram: https://www.instagram.com/antonioivanovski
+  linkedin: https://www.linkedin.com/in/antonioivanovski
 
 # navbar pages
 navbar:
   - slug: about
     title: About
-  - slug: icons
-    title: Icons
   - slug: blog
     title: Blog
 
-exclude: ["config.rb", "src", "Gemfile", "Gemfile.lock", "package.json","README.md", "Rakefile"]
+exclude:
+  [
+    "config.rb",
+    "src",
+    "Gemfile",
+    "Gemfile.lock",
+    "package.json",
+    "README.md",
+    "Rakefile",
+  ]
